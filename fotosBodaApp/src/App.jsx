@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { supabase } from './supabaseClient';
+import fyr from './assets/fyr.png'
 
 function App() {
  const [files, setFiles] = useState(null)
@@ -60,8 +61,9 @@ function App() {
       <div style={styles.container}>
       <div style={styles.card}>
         <div style={styles.header}>
-          <span style={styles.icon}>💍</span>
-          <h2 style={styles.title}>Nuestra Boda</h2>
+          {/* Aquí corregimos para usar styles.logo */}
+          <img src={fyr} alt="Fátima y Rodrigo" style={styles.logo} />
+          <h3 style={styles.dateTitle}>28 · 11 · 26</h3>
           <p style={styles.subtitle}>Comparte tus mejores momentos con nosotros</p>
         </div>
 
@@ -70,7 +72,6 @@ function App() {
             <label style={styles.label}>Tu Nombre:</label>
             <input
               type="text"
-              placeholder="Ej. María Pérez"
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
               required
@@ -81,7 +82,7 @@ function App() {
           <div style={styles.inputGroup}>
             <label style={styles.label}>Dedicatoria para los novios:</label>
             <textarea 
-              placeholder="Escribe un mensaje bonito..."
+              placeholder="Escribe un mensaje bonito"
               value={mensaje}
               onChange={(e) => setMensaje(e.target.value)}
               style={styles.textarea}
@@ -89,7 +90,6 @@ function App() {
           </div>
 
           <div style={styles.inputGroup}>
-            <label style={styles.label}>Seleccionar fotos:</label>
             <div style={styles.fileBox}>
               <input
                 type="file"
@@ -102,7 +102,7 @@ function App() {
               <span style={styles.fileText}>
                 {files && files.length > 0 
                   ? `${files.length} archivo(s) seleccionado(s)` 
-                  : '📷 Toca aquí para elegir fotos'}
+                  : 'Toca aquí para elegir fotos'}
               </span>
             </div>
           </div>
@@ -116,7 +116,7 @@ function App() {
               cursor: uploading ? 'not-allowed' : 'pointer'
             }}
           >
-            {uploading ? 'Subiendo recuerdos...' : 'Subir Fotos 🚀'}
+            {uploading ? 'Subiendo recuerdos...' : 'Subir Fotos'}
           </button>
         </form>
       </div>
@@ -124,11 +124,19 @@ function App() {
   ) 
 }
 
-// Estilos limpios, modernos y adaptados para dispositivos móviles
+// Estilos
 const styles = {
+  logo: {
+    width: '80px',
+    height: 'auto',
+    marginBottom: '12px',
+    display: 'block',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  },
   container: {
     minHeight: '100vh',
-    backgroundColor: '#0f172a', // Fondo oscuro elegante tipo noche de boda
+    backgroundColor: '#0f172a',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -149,21 +157,39 @@ const styles = {
     textAlign: 'center',
     marginBottom: '24px',
   },
-  icon: {
-    fontSize: '36px',
-    display: 'block',
-    marginBottom: '8px',
-  },
-  title: {
-    color: '#f8fafc',
-    fontSize: '24px',
+  sectionTitle: {
+    color: '#94a3b8',
+    fontSize: '13px',
+    textTransform: 'uppercase',
+    letterSpacing: '2px',
     margin: '0 0 4px 0',
-    fontWeight: '700',
+    fontWeight: '600',
+    fontFamily: 'italic',
+  },
+  mainTitle: {
+    fontFamily: "'Alex Brush', cursive", // Fuente cursiva formal y elegante
+    fontSize: '2.8rem', // Un tamaño imponente pero adaptado a la tarjeta
+    fontWeight: '400',
+    color: '#ffffff',
+    textAlign: 'center',
+    lineHeight: '1.1',
+    margin: '8px 0',
+    // Mantenemos el resplandor mágico que imita el brillo de la invitación
+    textShadow: '0 0 15px rgba(255, 235, 180, 0.6), 0 0 30px rgba(200, 146, 42, 0.4), 0 0 45px rgba(100, 160, 255, 0.25)',
+  },
+  dateTitle: {
+    color: '#fbbf24',
+    fontSize: '25px',
+    margin: '0 0 10px 0',
+    fontWeight: '600',
+    letterSpacing: '1px',
+    fontFamily: 'italic',
   },
   subtitle: {
     color: '#94a3b8',
     fontSize: '14px',
     margin: '0',
+    fontFamily: 'italic',
   },
   form: {
     display: 'flex',
@@ -179,14 +205,15 @@ const styles = {
     color: '#e2e8f0',
     fontSize: '14px',
     fontWeight: '600',
+    fontFamily: 'italic',
   },
   input: {
     backgroundColor: '#0f172a',
     border: '1px solid #475569',
     borderRadius: '10px',
     padding: '12px 14px',
-    color: '#f8fafc',
-    fontSize: '16px', // 16px previene el zoom automático en celulares iOS al hacer foco
+    color: '#94a3b8',
+    fontSize: '16px',
     outline: 'none',
     transition: 'border-color 0.2s',
   },
@@ -195,7 +222,7 @@ const styles = {
     border: '1px solid #475569',
     borderRadius: '10px',
     padding: '12px 14px',
-    color: '#f8fafc',
+    color: '#94a3b8',
     fontSize: '16px',
     outline: 'none',
     resize: 'vertical',
@@ -222,13 +249,13 @@ const styles = {
     cursor: 'pointer',
   },
   fileText: {
-    color: '#cbd5e1',
+    color: '#94a3b8',
     fontSize: '14px',
     fontWeight: '500',
     pointerEvents: 'none',
   },
   button: {
-    backgroundColor: '#3b82f6', // Un tono azul elegante y llamativo
+    backgroundColor: '#3b82f6',
     color: '#ffffff',
     border: 'none',
     borderRadius: '12px',
@@ -239,6 +266,6 @@ const styles = {
     transition: 'background-color 0.2s, transform 0.1s',
     boxShadow: '0 4px 12px rgba(59, 130, 246, 0.4)',
     marginTop: '8px',
-  } 
+  }
   }
   export default App;
