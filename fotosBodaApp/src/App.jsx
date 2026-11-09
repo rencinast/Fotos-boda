@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { supabase } from './supabaseClient';
-import fyr from './assets/fyr.png'
+import fyr from './assets/FyR.png'
 
 function App() {
  const [files, setFiles] = useState(null)
