@@ -1,4 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap');
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #0f172a; /* Para que coincida con el fondo oscuro de tu app */
+  overflow-x: hidden; /* Evita scroll horizontal accidental */
+}
+
 :root {
   --text: #6b6375;
   --text-h: #08060d;

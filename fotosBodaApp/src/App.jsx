@@ -135,7 +135,8 @@ const styles = {
     marginRight: 'auto',
   },
   container: {
-    minHeight: '100vh',
+    height: '100vh', // Cambiado de minHeight a height fija
+    overflow: 'hidden', // Bloquea cualquier scroll
     backgroundColor: '#0f172a',
     display: 'flex',
     justifyContent: 'center',
