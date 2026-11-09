@@ -8,7 +8,7 @@ export default function Gallery() {
   const [selectedIndex, setSelectedIndex] = useState(null);
 
   useEffect(() => {
-    const cargarGaleria = async () => {
+    async function cargarGaleria() {
       setLoading(true);
       const { data, error } = await supabase
         .from("fotos")
@@ -22,7 +22,7 @@ export default function Gallery() {
         setFotosAprobadas(data || []);
       }
       setLoading(false);
-    };
+    }
 
     cargarGaleria();
   }, []);
@@ -69,29 +69,33 @@ export default function Gallery() {
 
   return (
     <div style={styles.galleryContainer}>
-      {/* Inyectamos estilos responsivos para móvil directamente */}
+      {/* Estilos responsivos adaptados al nuevo layout de móvil */}
       <style>{`
         @media (max-width: 768px) {
           .modal-content-custom {
             flex-direction: column !important;
-            width: 92vw !important;
-            height: 85vh !important;
-            max-height: 600px !important;
+            width: 95vw !important;
+            height: 90vh !important;
+            max-height: 700px !important;
           }
           .modal-image-container-custom {
             width: 100% !important;
-            height: 55% !important;
-            min-height: 200px !important;
+            flex: 1 !important;
+            height: auto !important;
+            padding: 10px !important;
           }
           .modal-sidebar-custom {
             width: 100% !important;
-            height: 45% !important;
-            padding: 16px !important;
+            height: auto !important;
+            max-height: 220px !important;
+            padding: 14px !important;
+            border-top: 1px solid #334155;
           }
-          .side-nav-btn-custom {
-            width: 40px !important;
-            height: 40px !important;
-            font-size: 16px !important;
+          .mobile-nav-bar {
+            display: flex !important;
+          }
+          .desktop-nav-btn {
+            display: none !important;
           }
         }
       `}</style>
@@ -144,16 +148,17 @@ export default function Gallery() {
         </div>
       )}
 
-      {/* MODAL LIGHTBOX RESPONSIVO */}
+      {/* MODAL LIGHTBOX */}
       {fotoActual && (
         <div style={styles.modalOverlay} onClick={() => setSelectedIndex(null)}>
+          {/* Botón Izquierda (Solo visible en PC a los lados) */}
           <button
             onClick={(e) => {
               e.stopPropagation();
               handlePrev();
             }}
-            style={{ ...styles.sideNavBtn, left: "10px" }}
-            className="side-nav-btn-custom"
+            style={{ ...styles.sideNavBtn, left: "20px" }}
+            className="desktop-nav-btn"
             title="Anterior"
           >
             ❮
@@ -171,7 +176,7 @@ export default function Gallery() {
               ✕
             </button>
 
-            {/* Contenedor de la Foto */}
+            {/* Contenedor de la Foto Limpio y Amplio */}
             <div
               style={styles.modalImageContainer}
               className="modal-image-container-custom"
@@ -186,20 +191,9 @@ export default function Gallery() {
               </div>
             </div>
 
-            {/* Contenedor de Datos (Abajo en móvil, a la derecha en PC) */}
+            {/* Contenedor de Datos y Barra de Navegación Móvil */}
             <div style={styles.modalSidebar} className="modal-sidebar-custom">
               <div>
-                <h2
-                  style={{
-                    color: "#f8fafc",
-                    marginTop: "0",
-                    fontSize: "18px",
-                    marginBottom: "10px",
-                  }}
-                >
-                  Recuerdo Especial 🤍
-                </h2>
-
                 <div style={styles.detailGroup}>
                   <label style={styles.detailLabel}>Subido por:</label>
                   <p style={styles.detailValue}>
@@ -215,21 +209,41 @@ export default function Gallery() {
                 </div>
               </div>
 
-              <div style={styles.modalFooterInfo}>
-                <span style={{ color: "#94a3b8", fontSize: "11px" }}>
-                  Usa las flechas para navegar
+              {/* Barra de Navegación Inferior exclusiva para Teléfono (como en tu esquema) */}
+              <div style={styles.mobileNavBar} className="mobile-nav-bar">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handlePrev();
+                  }}
+                  style={styles.mobileNavBtn}
+                >
+                  ❮ Anterior
+                </button>
+                <span style={styles.mobileCounter}>
+                  {selectedIndex + 1} / {fotosAprobadas.length}
                 </span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleNext();
+                  }}
+                  style={styles.mobileNavBtn}
+                >
+                  Siguiente ❯
+                </button>
               </div>
             </div>
           </div>
 
+          {/* Botón Derecha (Solo visible en PC a los lados) */}
           <button
             onClick={(e) => {
               e.stopPropagation();
               handleNext();
             }}
-            style={{ ...styles.sideNavBtn, right: "10px" }}
-            className="side-nav-btn-custom"
+            style={{ ...styles.sideNavBtn, right: "20px" }}
+            className="desktop-nav-btn"
             title="Siguiente"
           >
             ❯
@@ -356,15 +370,15 @@ const styles = {
   },
   closeModalBtn: {
     position: "absolute",
-    top: "10px",
-    right: "10px",
+    top: "12px",
+    right: "12px",
     backgroundColor: "rgba(15, 23, 42, 0.8)",
     color: "#fff",
     border: "none",
     borderRadius: "50%",
-    width: "32px",
-    height: "32px",
-    fontSize: "14px",
+    width: "36px",
+    height: "36px",
+    fontSize: "16px",
     cursor: "pointer",
     zIndex: 20,
     display: "flex",
@@ -379,7 +393,7 @@ const styles = {
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
-    padding: "15px",
+    padding: "20px",
     boxSizing: "border-box",
   },
   modalImage: {
@@ -389,19 +403,19 @@ const styles = {
   },
   counterBadge: {
     position: "absolute",
-    bottom: "12px",
-    left: "15px",
+    bottom: "16px",
+    left: "20px",
     backgroundColor: "rgba(15, 23, 42, 0.8)",
     color: "#fff",
-    padding: "4px 10px",
-    borderRadius: "10px",
-    fontSize: "12px",
+    padding: "6px 12px",
+    borderRadius: "12px",
+    fontSize: "13px",
     fontWeight: "600",
   },
   modalSidebar: {
     width: "400px",
     height: "100%",
-    padding: "24px",
+    padding: "30px",
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
@@ -410,7 +424,7 @@ const styles = {
     overflowY: "auto",
   },
   detailGroup: {
-    marginBottom: "12px",
+    marginBottom: "14px",
   },
   detailLabel: {
     color: "#94a3b8",
@@ -423,7 +437,7 @@ const styles = {
   },
   detailValue: {
     color: "#f8fafc",
-    fontSize: "15px",
+    fontSize: "16px",
     margin: "0",
     fontWeight: "600",
   },
@@ -437,13 +451,8 @@ const styles = {
     padding: "10px",
     borderRadius: "8px",
     border: "1px solid #334155",
-    maxHeight: "100px",
+    maxHeight: "90px",
     overflowY: "auto",
-  },
-  modalFooterInfo: {
-    textAlign: "center",
-    borderTop: "1px solid #334155",
-    paddingTop: "10px",
   },
   sideNavBtn: {
     position: "absolute",
@@ -453,14 +462,38 @@ const styles = {
     color: "#fff",
     border: "1px solid #475569",
     borderRadius: "50%",
-    width: "50px",
-    height: "50px",
-    fontSize: "20px",
+    width: "56px",
+    height: "56px",
+    fontSize: "22px",
     cursor: "pointer",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     zIndex: 1010,
     transition: "background-color 0.2s",
+  },
+  // Estilos de la nueva barra de navegación inferior para móvil
+  mobileNavBar: {
+    display: "none", // Oculto por defecto en PC
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderTop: "1px solid #334155",
+    paddingTop: "12px",
+    marginTop: "10px",
+  },
+  mobileNavBtn: {
+    backgroundColor: "#334155",
+    color: "#fff",
+    border: "none",
+    padding: "8px 14px",
+    borderRadius: "8px",
+    fontSize: "13px",
+    fontWeight: "600",
+    cursor: "pointer",
+  },
+  mobileCounter: {
+    color: "#94a3b8",
+    fontSize: "13px",
+    fontWeight: "600",
   },
 };
