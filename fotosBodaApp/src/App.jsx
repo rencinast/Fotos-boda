@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
-import Upload from "./components/upload";
-import Admin from "./components/Admin";
-import Gallery from "./components/Gallery";
+import Upload from "../components/upload";
+import Admin from "../components/admin";
+import Gallery from "../components/gallery";
 
 export default function App() {
   return (
