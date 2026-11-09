@@ -127,57 +127,37 @@ function App() {
 // Estilos
 const styles = {
   logo: {
-    width: '80px',
-    height: 'auto',
-    marginBottom: '12px',
-    display: 'block',
-    marginLeft: 'auto',
-    marginRight: 'auto',
-  },
+  width: '75px', // Ligera reducción del logo (era 90px)
+  height: 'auto',
+  marginBottom: '6px',
+  display: 'block',
+  marginLeft: 'auto',
+  marginRight: 'auto',
+},
   container: {
-    height: '100vh', // Cambiado de minHeight a height fija
-    overflow: 'hidden', // Bloquea cualquier scroll
+    minHeight: '100dvh', // Usa la altura dinámica visible en móviles
     backgroundColor: '#0f172a',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: '16px',
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+    padding: '12px 16px', // Reducimos padding vertical (de 16px a 12px)
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    boxSizing: 'border-box',
   },
   card: {
-    backgroundColor: '#1e293b',
-    borderRadius: '20px',
-    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3)',
-    width: '100%',
-    maxWidth: '440px',
-    padding: '24px',
-    boxSizing: 'border-box',
-    border: '1px solid #334155',
-  },
+  backgroundColor: '#1e293b',
+  borderRadius: '20px',
+  boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3)',
+  width: '100%',
+  maxWidth: '440px',
+  padding: '18px 20px', // Reducimos padding interno (era 24px)
+  boxSizing: 'border-box',
+  border: '1px solid #334155',
+},
   header: {
-    textAlign: 'center',
-    marginBottom: '24px',
-  },
-  sectionTitle: {
-    color: '#94a3b8',
-    fontSize: '13px',
-    textTransform: 'uppercase',
-    letterSpacing: '2px',
-    margin: '0 0 4px 0',
-    fontWeight: '600',
-    fontFamily: 'italic',
-  },
-  mainTitle: {
-    fontFamily: "'Alex Brush', cursive", // Fuente cursiva formal y elegante
-    fontSize: '2.8rem', // Un tamaño imponente pero adaptado a la tarjeta
-    fontWeight: '400',
-    color: '#ffffff',
-    textAlign: 'center',
-    lineHeight: '1.1',
-    margin: '8px 0',
-    // Mantenemos el resplandor mágico que imita el brillo de la invitación
-    textShadow: '0 0 15px rgba(255, 235, 180, 0.6), 0 0 30px rgba(200, 146, 42, 0.4), 0 0 45px rgba(100, 160, 255, 0.25)',
-  },
+  textAlign: 'center',
+  marginBottom: '14px', // Reducimos margen inferior (era 24px)
+},
   dateTitle: {
     color: '#fbbf24',
     fontSize: '25px',
@@ -186,17 +166,11 @@ const styles = {
     letterSpacing: '1px',
     fontFamily: 'italic',
   },
-  subtitle: {
-    color: '#94a3b8',
-    fontSize: '14px',
-    margin: '0',
-    fontFamily: 'italic',
-  },
   form: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '18px',
-  },
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '12px', // Reducimos separación entre campos (era 18px)
+},
   inputGroup: {
     display: 'flex',
     flexDirection: 'column',
@@ -219,17 +193,17 @@ const styles = {
     transition: 'border-color 0.2s',
   },
   textarea: {
-    backgroundColor: '#0f172a',
-    border: '1px solid #475569',
-    borderRadius: '10px',
-    padding: '12px 14px',
-    color: '#94a3b8',
-    fontSize: '16px',
-    outline: 'none',
-    resize: 'vertical',
-    minHeight: '80px',
-    fontFamily: 'inherit',
-  },
+  backgroundColor: '#0f172a',
+  border: '1px solid #475569',
+  borderRadius: '10px',
+  padding: '10px 12px',
+  color: '#f8fafc',
+  fontSize: '16px',
+  outline: 'none',
+  resize: 'none',
+  minHeight: '65px', // Reducimos la altura del textarea (era 80px)
+  fontFamily: 'inherit',
+},
   fileBox: {
     position: 'relative',
     backgroundColor: '#0f172a',
