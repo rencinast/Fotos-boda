@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 
 export default function Gallery() {
@@ -68,11 +69,41 @@ export default function Gallery() {
 
   return (
     <div style={styles.galleryContainer}>
+      {/* Inyectamos estilos responsivos para móvil directamente */}
+      <style>{`
+        @media (max-width: 768px) {
+          .modal-content-custom {
+            flex-direction: column !important;
+            width: 92vw !important;
+            height: 85vh !important;
+            max-height: 600px !important;
+          }
+          .modal-image-container-custom {
+            width: 100% !important;
+            height: 55% !important;
+            min-height: 200px !important;
+          }
+          .modal-sidebar-custom {
+            width: 100% !important;
+            height: 45% !important;
+            padding: 16px !important;
+          }
+          .side-nav-btn-custom {
+            width: 40px !important;
+            height: 40px !important;
+            font-size: 16px !important;
+          }
+        }
+      `}</style>
+
       <div style={styles.header}>
         <h1 style={styles.title}>Álbum de Recuerdos 💍</h1>
         <p style={styles.subtitle}>
           Momentos inolvidables capturados por nuestros invitados
         </p>
+        <Link to="/" style={styles.backLink}>
+          ← Volver a subir fotos
+        </Link>
       </div>
 
       {loading ? (
@@ -80,7 +111,11 @@ export default function Gallery() {
           Abriendo el álbum...
         </p>
       ) : fotosAprobadas.length === 0 ? (
-        <div style={styles.emptyState}></div>
+        <div style={styles.emptyState}>
+          <p style={{ color: "#cbd5e1", fontSize: "18px" }}>
+            El álbum aún está vacío. ¡Sé el primero en subir una foto!
+          </p>
+        </div>
       ) : (
         <div style={styles.grid}>
           {fotosAprobadas.map((foto, index) => (
@@ -89,7 +124,6 @@ export default function Gallery() {
               style={styles.polaroidCard}
               onClick={() => setSelectedIndex(index)}
             >
-              {/* Marco fotográfico interior (estilo ventana Polaroid) */}
               <div style={styles.polaroidImageWrapper}>
                 <img
                   src={foto.url_imagen}
@@ -97,7 +131,6 @@ export default function Gallery() {
                   style={styles.polaroidImage}
                 />
               </div>
-              {/* Pie de la Polaroid */}
               <div style={styles.polaroidFooter}>
                 <p style={styles.guestName}>
                   {foto.nombre_invitado || "Anónimo"}
@@ -111,7 +144,7 @@ export default function Gallery() {
         </div>
       )}
 
-      {/* MODAL LIGHTBOX */}
+      {/* MODAL LIGHTBOX RESPONSIVO */}
       {fotoActual && (
         <div style={styles.modalOverlay} onClick={() => setSelectedIndex(null)}>
           <button
@@ -119,13 +152,18 @@ export default function Gallery() {
               e.stopPropagation();
               handlePrev();
             }}
-            style={{ ...styles.sideNavBtn, left: "20px" }}
-            title="Anterior (Flecha Izquierda)"
+            style={{ ...styles.sideNavBtn, left: "10px" }}
+            className="side-nav-btn-custom"
+            title="Anterior"
           >
             ❮
           </button>
 
-          <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+          <div
+            style={styles.modalContent}
+            className="modal-content-custom"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               style={styles.closeModalBtn}
               onClick={() => setSelectedIndex(null)}
@@ -133,7 +171,11 @@ export default function Gallery() {
               ✕
             </button>
 
-            <div style={styles.modalImageContainer}>
+            {/* Contenedor de la Foto */}
+            <div
+              style={styles.modalImageContainer}
+              className="modal-image-container-custom"
+            >
               <img
                 src={fotoActual.url_imagen}
                 alt="Vista ampliada"
@@ -144,10 +186,16 @@ export default function Gallery() {
               </div>
             </div>
 
-            <div style={styles.modalSidebar}>
+            {/* Contenedor de Datos (Abajo en móvil, a la derecha en PC) */}
+            <div style={styles.modalSidebar} className="modal-sidebar-custom">
               <div>
                 <h2
-                  style={{ color: "#f8fafc", marginTop: "0", fontSize: "22px" }}
+                  style={{
+                    color: "#f8fafc",
+                    marginTop: "0",
+                    fontSize: "18px",
+                    marginBottom: "10px",
+                  }}
                 >
                   Recuerdo Especial 🤍
                 </h2>
@@ -166,6 +214,12 @@ export default function Gallery() {
                   </p>
                 </div>
               </div>
+
+              <div style={styles.modalFooterInfo}>
+                <span style={{ color: "#94a3b8", fontSize: "11px" }}>
+                  Usa las flechas para navegar
+                </span>
+              </div>
             </div>
           </div>
 
@@ -174,8 +228,9 @@ export default function Gallery() {
               e.stopPropagation();
               handleNext();
             }}
-            style={{ ...styles.sideNavBtn, right: "20px" }}
-            title="Siguiente (Flecha Derecha)"
+            style={{ ...styles.sideNavBtn, right: "10px" }}
+            className="side-nav-btn-custom"
+            title="Siguiente"
           >
             ❯
           </button>
@@ -227,10 +282,9 @@ const styles = {
     width: "100%",
     maxWidth: "1100px",
   },
-  // Estructura idéntica a una Polaroid física
   polaroidCard: {
-    backgroundColor: "#ffffff", // Marco blanco completo
-    padding: "14px 14px 24px 14px", // Márgenes simétricos arriba/lados y más espacio abajo
+    backgroundColor: "#ffffff",
+    padding: "14px 14px 24px 14px",
     borderRadius: "4px",
     boxShadow: "0 12px 25px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0,0,0,0.2)",
     cursor: "pointer",
@@ -241,7 +295,7 @@ const styles = {
   polaroidImageWrapper: {
     width: "100%",
     height: "240px",
-    backgroundColor: "#000000", // Fondo negro/oscuro dentro del marco como en una Polaroid real
+    backgroundColor: "#000000",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -250,7 +304,7 @@ const styles = {
   polaroidImage: {
     maxWidth: "100%",
     maxHeight: "100%",
-    objectFit: "contain", // Muestra la foto completa sin recortar nada
+    objectFit: "contain",
   },
   polaroidFooter: {
     paddingTop: "16px",
@@ -261,7 +315,6 @@ const styles = {
     fontSize: "15px",
     fontWeight: "700",
     margin: "0 0 4px 0",
-    fontFamily: "Caveat, cursive, sans-serif", // Simula escritura a mano si se desea, o limpia
     letterSpacing: "0.5px",
   },
   guestMsg: {
@@ -303,15 +356,15 @@ const styles = {
   },
   closeModalBtn: {
     position: "absolute",
-    top: "12px",
-    right: "12px",
+    top: "10px",
+    right: "10px",
     backgroundColor: "rgba(15, 23, 42, 0.8)",
     color: "#fff",
     border: "none",
     borderRadius: "50%",
-    width: "36px",
-    height: "36px",
-    fontSize: "16px",
+    width: "32px",
+    height: "32px",
+    fontSize: "14px",
     cursor: "pointer",
     zIndex: 20,
     display: "flex",
@@ -326,7 +379,7 @@ const styles = {
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
-    padding: "20px",
+    padding: "15px",
     boxSizing: "border-box",
   },
   modalImage: {
@@ -336,60 +389,61 @@ const styles = {
   },
   counterBadge: {
     position: "absolute",
-    bottom: "16px",
-    left: "20px",
+    bottom: "12px",
+    left: "15px",
     backgroundColor: "rgba(15, 23, 42, 0.8)",
     color: "#fff",
-    padding: "6px 12px",
-    borderRadius: "12px",
-    fontSize: "13px",
+    padding: "4px 10px",
+    borderRadius: "10px",
+    fontSize: "12px",
     fontWeight: "600",
   },
   modalSidebar: {
     width: "400px",
     height: "100%",
-    padding: "30px",
+    padding: "24px",
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
     backgroundColor: "#1e293b",
     boxSizing: "border-box",
+    overflowY: "auto",
   },
   detailGroup: {
-    marginBottom: "20px",
+    marginBottom: "12px",
   },
   detailLabel: {
     color: "#94a3b8",
-    fontSize: "12px",
+    fontSize: "11px",
     textTransform: "uppercase",
     letterSpacing: "1px",
     display: "block",
-    marginBottom: "6px",
+    marginBottom: "4px",
     fontWeight: "600",
   },
   detailValue: {
     color: "#f8fafc",
-    fontSize: "17px",
+    fontSize: "15px",
     margin: "0",
     fontWeight: "600",
   },
   detailMsg: {
     color: "#e2e8f0",
-    fontSize: "15px",
+    fontSize: "14px",
     margin: "0",
     fontStyle: "italic",
-    lineHeight: "1.5",
+    lineHeight: "1.4",
     backgroundColor: "#0f172a",
-    padding: "14px",
-    borderRadius: "10px",
+    padding: "10px",
+    borderRadius: "8px",
     border: "1px solid #334155",
-    maxHeight: "180px",
+    maxHeight: "100px",
     overflowY: "auto",
   },
   modalFooterInfo: {
     textAlign: "center",
     borderTop: "1px solid #334155",
-    paddingTop: "15px",
+    paddingTop: "10px",
   },
   sideNavBtn: {
     position: "absolute",
@@ -399,9 +453,9 @@ const styles = {
     color: "#fff",
     border: "1px solid #475569",
     borderRadius: "50%",
-    width: "56px",
-    height: "56px",
-    fontSize: "22px",
+    width: "50px",
+    height: "50px",
+    fontSize: "20px",
     cursor: "pointer",
     display: "flex",
     alignItems: "center",
