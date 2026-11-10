@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import fyr from "../assets/FyR.png";
 
@@ -27,7 +28,7 @@ function App() {
     e.preventDefault();
     if (!files || files.length === 0)
       return mostrarToast("Seleccione una foto primero");
-    
+
     const fileArray = Array.from(files);
     const maxSize = 50 * 1024 * 1024; //convertir 50MB en bytes
 
@@ -35,10 +36,16 @@ function App() {
 
     for (const file of fileArray) {
       if (!file.type.startsWith("image/")) {
-        return mostrarToast(`El archivo "${file.name}" No es Una imagen valida,`, "error");
+        return mostrarToast(
+          `El archivo "${file.name}" No es Una imagen valida,`,
+          "error",
+        );
       }
       if (file.size > maxSize) {
-        return mostrarToast(`El archivo "${file.name}" supera el limite de 50MB,`, "error")
+        return mostrarToast(
+          `El archivo "${file.name}" supera el limite de 50MB,`,
+          "error",
+        );
       }
     }
 
@@ -47,17 +54,17 @@ function App() {
     try {
       setUploading(true);
       // inicializar contador
-      setProgress ({ current: 0, total: fileArray.length });
+      setProgress({ current: 0, total: fileArray.length });
 
       let completeCount = 0;
       //Procesar todas las subidas
-      const uploadPromises = fileArray.map(async (file) =>{
-
+      const uploadPromises = fileArray.map(async (file) => {
         //Crear nombre unico para cada archivo.
-        const fileExt = file.name.split('.').pop();
-        const uniqueId = (typeof crypto !== 'undefined' && crypto.randomUUID)
-          ? crypto.randomUUID()
-          : `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+        const fileExt = file.name.split(".").pop();
+        const uniqueId =
+          typeof crypto !== "undefined" && crypto.randomUUID
+            ? crypto.randomUUID()
+            : `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
         const fileName = `${uniqueId}.${fileExt}`;
 
         const { error: storageError } = await supabase.storage
@@ -88,14 +95,17 @@ function App() {
         if (dbError) throw dbError;
 
         //Actualizar el contador
-        completeCount ++;
-        setProgress({ current: completeCount, total: fileArray.length })
+        completeCount++;
+        setProgress({ current: completeCount, total: fileArray.length });
       });
 
       //Esperara a que todas las imagenes se suban
       await Promise.all(uploadPromises);
 
-      mostrarToast( "Foto subida con exito! Gracias por compartir tu foto.", "success",);
+      mostrarToast(
+        "Foto subida con exito! Gracias por compartir tu foto.",
+        "success",
+      );
 
       //Limpiar formulario después de subir la foto.
       setFiles([]);
@@ -103,13 +113,15 @@ function App() {
       setMensaje("");
       e.target.reset(); // Limpiar el input de archivos
     } catch (error) {
-
-      // TRANSACCIONALIDAD / ROLLBACK: 
+      // TRANSACCIONALIDAD / ROLLBACK:
       // Si algo falló a mitad del lote, eliminamos del Storage los archivos que ya se habían subido
       if (uploadFileNames.length > 0) {
         await supabase.storage.from("FOTOS").remove(uploadFileNames);
       }
-      mostrarToast("Error al subir las fotos." + (error.mensaje || "Error desconocido"), "error");
+      mostrarToast(
+        "Error al subir las fotos." + (error.mensaje || "Error desconocido"),
+        "error",
+      );
     } finally {
       setUploading(false);
     }
@@ -205,6 +217,11 @@ function App() {
             </span>
           </button>
         </form>
+        <div style={styles.galleryLinkContainer}>
+        <Link to="/gallery" style={styles.galleryLink}>
+          Ver galería de fotos
+        </Link>
+      </div>
       </div>
     </div>
   );
@@ -225,6 +242,19 @@ const styles = {
     zIndex: 9999,
     maxWidth: "90%",
     textAlign: "center",
+  },
+  galleryLinkContainer: {
+    textAlign: "center",
+    marginTop: "16px",
+  },
+  galleryLink: {
+    color: "#38bdf8",
+    fontSize: "14px",
+    textDecoration: "underline",
+    cursor: "pointer",
+    background: "none",
+    border: "none",
+    padding: 0,
   },
   logo: {
     width: "75px", // Ligera reducción del logo (era 90px)
@@ -330,7 +360,7 @@ const styles = {
     fontWeight: "500",
     pointerEvents: "none",
   },
-button: {
+  button: {
     backgroundColor: "#3b82f6",
     color: "#ffffff",
     border: "none",
@@ -343,7 +373,7 @@ button: {
     boxShadow: "0 4px 12px rgba(59, 130, 246, 0.4)",
     marginTop: "8px",
     position: "relative", // Requerido para posicionar el llenado interno
-    overflow: "hidden",   // Oculta los bordes del relleno cuando supera el 100%
+    overflow: "hidden", // Oculta los bordes del relleno cuando supera el 100%
   },
   buttonProgressFill: {
     position: "absolute",
