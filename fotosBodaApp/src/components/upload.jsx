@@ -8,10 +8,24 @@ function App() {
   const [mensaje, setMensaje] = useState("");
   const [uploading, setUploading] = useState(false);
 
+  //notificacion
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+    type: "success",
+  });
+
+  const mostrarToast = (message, type = "success") => {
+    setToast({ show: true, message, type });
+    setTimeout(() => {
+      setToast({ show: false, message: "", type: "success" });
+    }, 4000); // 4 segundos
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!files || files.length === 0)
-      return alert("Seleccione una foto primero");
+      return mostrarToast("Seleccione una foto primero");
 
     try {
       setUploading(true);
@@ -47,15 +61,15 @@ function App() {
         if (dbError) throw dbError;
       }
 
-      alert("Foto subida con exito! Gracias por compartir tu foto.");
+      mostrarToast( "Foto subida con exito! Gracias por compartir tu foto.", "success",);
 
       //Limpiar formulario después de subir la foto.
       setFiles([]);
       setNombre("");
       setMensaje("");
+      e.target.reset(); // Limpiar el input de archivos
     } catch (error) {
-      console.error("Error al subir las fotos:", error.message);
-      alert("Error al subir las fotos.");
+      mostrarToast("Error al subir las fotos.", "error");
     } finally {
       setUploading(false);
     }
@@ -63,6 +77,17 @@ function App() {
 
   return (
     <div style={styles.container}>
+      {/*Notificaciones*/}
+      {toast.show && (
+        <div
+          style={{
+            ...styles.toast,
+            backgroundColor: toast.type === "success" ? "#16a34a" : "#dc2626",
+          }}
+        >
+          {toast.message}
+        </div>
+      )}
       <div style={styles.card}>
         <div style={styles.header}>
           {/* Aquí corregimos para usar styles.logo */}
@@ -132,6 +157,20 @@ function App() {
 
 // Estilos
 const styles = {
+  toast: {
+    position: "fixed",
+    top: "20px",
+    right: "20px",
+    color: "#fff",
+    padding: "14px 20px",
+    borderRadius: "12px",
+    boxShadow: "0 10px 25px rgba(0,0,0,0.4)",
+    fontWeight: "600",
+    fontSize: "14px",
+    zIndex: 9999,
+    maxWidth: "90%",
+    textAlign: "center",
+  },
   logo: {
     width: "75px", // Ligera reducción del logo (era 90px)
     height: "auto",

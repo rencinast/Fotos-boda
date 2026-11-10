@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 
 export default function Gallery() {
@@ -123,13 +122,11 @@ export default function Gallery() {
       `}</style>
 
       <div style={styles.header}>
-        <h1 style={styles.title}>Álbum de Recuerdos 💍</h1>
+        <h1 style={styles.title}>Álbum de Recuerdos</h1>
+        <h1 style={styles.title}>Boda Fátima y Rodrigo</h1>
         <p style={styles.subtitle}>
           Momentos inolvidables capturados por nuestros invitados
         </p>
-        <Link to="/" style={styles.backLink}>
-          ← Volver a subir fotos
-        </Link>
       </div>
 
       {loading ? (
@@ -288,8 +285,7 @@ const styles = {
     width: "100%",
     backgroundColor: "#0f172a",
     padding: "40px 20px 80px 20px",
-    fontFamily:
-      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    fontFamily:'-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -310,12 +306,6 @@ const styles = {
     color: "#94a3b8",
     fontSize: "16px",
     margin: "0 0 16px 0",
-  },
-  backLink: {
-    color: "#3b82f6",
-    textDecoration: "none",
-    fontWeight: "600",
-    fontSize: "14px",
   },
   grid: {
     display: "grid",
