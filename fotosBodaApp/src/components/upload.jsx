@@ -7,6 +7,7 @@ function App() {
   const [nombre, setNombre] = useState("");
   const [mensaje, setMensaje] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState({ current: 0, total: 0 });
 
   //notificacion
   const [toast, setToast] = useState({
@@ -26,20 +27,46 @@ function App() {
     e.preventDefault();
     if (!files || files.length === 0)
       return mostrarToast("Seleccione una foto primero");
+    
+    const fileArray = Array.from(files);
+    const maxSize = 50 * 1024 * 1024; //convertir 50MB en bytes
+
+    //Validacion de tamaño de la foto max 50MB
+
+    for (const file of fileArray) {
+      if (!file.type.startsWith("image/")) {
+        return mostrarToast(`El archivo "${file.name}" No es Una imagen valida,`, "error");
+      }
+      if (file.size > maxSize) {
+        return mostrarToast(`El archivo "${file.name}" supera el limite de 50MB,`, "error")
+      }
+    }
+
+    const uploadFileNames = [];
 
     try {
       setUploading(true);
+      // inicializar contador
+      setProgress ({ current: 0, total: fileArray.length });
 
-      //recorrer cada archivo seleccionado y subirlo a Supabase.
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
+      let completeCount = 0;
+      //Procesar todas las subidas
+      const uploadPromises = fileArray.map(async (file) =>{
 
         //Crear nombre unico para cada archivo.
-        const fileName = `${Date.now()}_${file.name}`;
+        const fileExt = file.name.split('.').pop();
+        const uniqueId = (typeof crypto !== 'undefined' && crypto.randomUUID)
+          ? crypto.randomUUID()
+          : `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+        const fileName = `${uniqueId}.${fileExt}`;
+
         const { error: storageError } = await supabase.storage
           .from("FOTOS")
           .upload(fileName, file);
         if (storageError) throw storageError;
+
+        //Si se suben los archivos se agergan al arreglo
+        uploadFileNames.push(fileName);
 
         //obtener la URL pública de la foto subida.
         const { data: publicUrlData } = supabase.storage
@@ -59,7 +86,14 @@ function App() {
         ]);
 
         if (dbError) throw dbError;
-      }
+
+        //Actualizar el contador
+        completeCount ++;
+        setProgress({ current: completeCount, total: fileArray.length })
+      });
+
+      //Esperara a que todas las imagenes se suban
+      await Promise.all(uploadPromises);
 
       mostrarToast( "Foto subida con exito! Gracias por compartir tu foto.", "success",);
 
@@ -69,7 +103,13 @@ function App() {
       setMensaje("");
       e.target.reset(); // Limpiar el input de archivos
     } catch (error) {
-      mostrarToast("Error al subir las fotos.", "error");
+
+      // TRANSACCIONALIDAD / ROLLBACK: 
+      // Si algo falló a mitad del lote, eliminamos del Storage los archivos que ya se habían subido
+      if (uploadFileNames.length > 0) {
+        await supabase.storage.from("FOTOS").remove(uploadFileNames);
+      }
+      mostrarToast("Error al subir las fotos." + (error.mensaje || "Error desconocido"), "error");
     } finally {
       setUploading(false);
     }
@@ -137,17 +177,32 @@ function App() {
               </span>
             </div>
           </div>
-
           <button
             type="submit"
             disabled={uploading}
             style={{
               ...styles.button,
-              opacity: uploading ? 0.7 : 1,
               cursor: uploading ? "not-allowed" : "pointer",
+              position: "relative",
+              overflow: "hidden", // Importante para contener el relleno interno
             }}
           >
-            {uploading ? "Subiendo recuerdos..." : "Subir Fotos"}
+            {/* Fondo que se llena dinámicamente cuando está subiendo */}
+            {uploading && (
+              <div
+                style={{
+                  ...styles.buttonProgressFill,
+                  width: `${progress.total > 0 ? (progress.current / progress.total) * 100 : 0}%`,
+                }}
+              />
+            )}
+
+            {/* Texto que cambia dinámicamente */}
+            <span style={styles.buttonTextContent}>
+              {uploading
+                ? `Subiendo... (${progress.current}/${progress.total})`
+                : "Subir Fotos"}
+            </span>
           </button>
         </form>
       </div>
@@ -275,7 +330,7 @@ const styles = {
     fontWeight: "500",
     pointerEvents: "none",
   },
-  button: {
+button: {
     backgroundColor: "#3b82f6",
     color: "#ffffff",
     border: "none",
@@ -284,9 +339,24 @@ const styles = {
     fontSize: "16px",
     fontWeight: "600",
     cursor: "pointer",
-    transition: "background-color 0.2s, transform 0.1s",
+    transition: "transform 0.1s",
     boxShadow: "0 4px 12px rgba(59, 130, 246, 0.4)",
     marginTop: "8px",
+    position: "relative", // Requerido para posicionar el llenado interno
+    overflow: "hidden",   // Oculta los bordes del relleno cuando supera el 100%
+  },
+  buttonProgressFill: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    height: "100%",
+    backgroundColor: "#1d4ed8", // Un tono azul un poco más oscuro o vibrante para el progreso
+    transition: "width 0.2s ease-in-out",
+    zIndex: 1,
+  },
+  buttonTextContent: {
+    position: "relative",
+    zIndex: 2, // Asegura que el texto y el contador siempre estén por encima de la barra de carga
   },
 };
 export default App;
