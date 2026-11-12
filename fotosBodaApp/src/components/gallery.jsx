@@ -174,7 +174,7 @@ export default function Gallery() {
           className="modal-overlay-custom"
           onClick={() => setSelectedIndex(null)}
         >
-          {/* Botón Izquierda (Solo visible en PC) */}
+          {/* Botón Izquierda */}
           <button
             onClick={(e) => {
               e.stopPropagation();

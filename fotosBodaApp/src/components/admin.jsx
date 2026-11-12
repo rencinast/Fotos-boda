@@ -361,12 +361,12 @@ const styles = {
   },
   headerLeft: {
     display: "flex",
-    alignItems: "baseline", // Alinea el texto del contador perfectamente con la base del título
-    gap: "12px", // Espacio entre el título y el contador
+    alignItems: "baseline",
+    gap: "12px", 
   },
   pendingCounterText: {
-    color: "#94a3b8", // Color gris sutil
-    fontSize: "15px", // Tamaño equilibrado respecto al título
+    color: "#94a3b8",
+    fontSize: "15px", 
     fontWeight: "normal",
   },
   headerActions: {

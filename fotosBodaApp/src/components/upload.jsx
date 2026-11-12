@@ -33,7 +33,6 @@ function App() {
     const maxSize = 50 * 1024 * 1024; //convertir 50MB en bytes
 
     //Validacion de tamaño de la foto max 50MB
-
     for (const file of fileArray) {
       if (!file.type.startsWith("image/")) {
         return mostrarToast(
@@ -113,6 +112,7 @@ function App() {
       setMensaje("");
       e.target.reset(); // Limpiar el input de archivos
     } catch (error) {
+
       // TRANSACCIONALIDAD / ROLLBACK:
       // Si algo falló a mitad del lote, eliminamos del Storage los archivos que ya se habían subido
       if (uploadFileNames.length > 0) {
@@ -142,7 +142,6 @@ function App() {
       )}
       <div style={styles.card}>
         <div style={styles.header}>
-          {/* Aquí corregimos para usar styles.logo */}
           <img src={fyr} alt="Fátima y Rodrigo" style={styles.logo} />
           <h3 style={styles.dateTitle}>28 · 11 · 26</h3>
           <p style={styles.subtitle}>
@@ -196,10 +195,9 @@ function App() {
               ...styles.button,
               cursor: uploading ? "not-allowed" : "pointer",
               position: "relative",
-              overflow: "hidden", // Importante para contener el relleno interno
+              overflow: "hidden",
             }}
           >
-            {/* Fondo que se llena dinámicamente cuando está subiendo */}
             {uploading && (
               <div
                 style={{
@@ -209,7 +207,6 @@ function App() {
               />
             )}
 
-            {/* Texto que cambia dinámicamente */}
             <span style={styles.buttonTextContent}>
               {uploading
                 ? `Subiendo... (${progress.current}/${progress.total})`
